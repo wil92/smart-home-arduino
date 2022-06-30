@@ -1,6 +1,5 @@
 #include <unity.h>
 #include <cstdio>
-#include <MessageIn.h>
 #include <search.h>
 #include "../lib/communication/MessageIn.h"
 #include "../lib/communication/MessageOut.h"
@@ -43,6 +42,7 @@ int main(int argc, char **argv) {
 
     RUN_TEST(test_decode_message_from_json);
     RUN_TEST(test_encode_message_to_json);
+    RUN_TEST(test_get_CA_from_url);
 
     UNITY_END();
 }
