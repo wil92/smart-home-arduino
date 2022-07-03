@@ -20,6 +20,9 @@ pio device monitor
 
 // run tests
 pio test -e native
+
+// build local
+URL=/ HOST=192.168.178.21 PORT=3000 WSS=0 pio run -e nodemcuv2 -t upload --upload-port /dev/ttyUSB0
 ```
 
 > Note: `pio` is the short of `platformio`.

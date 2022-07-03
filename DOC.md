@@ -7,10 +7,10 @@
   mid: string;
   messageType: string;
   payload: {
-  id: string;
-  type: string;
-  name: {
-    name: string;
+    id: string;
+    type: string;
+    name: {
+      name: string;
     },
     on: boolean;
   }
