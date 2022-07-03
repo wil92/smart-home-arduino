@@ -40,8 +40,7 @@ void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent
     webSocket.setReconnectInterval(5000);
 }
 
-void WebsocketManager::messageReceived(uint8_t *payload) {
-    MessageIn msg = MessageIn::parseObject(payload);
+void WebsocketManager::messageReceived(MessageIn msg) {
     if (!std::strcmp(msg.payload.messageType, "EXECUTE")) {
         status = msg.payload.command.on;
         updateStatusEvent(status);
@@ -50,7 +49,7 @@ void WebsocketManager::messageReceived(uint8_t *payload) {
 }
 
 void WebsocketManager::sendCurrentStatus(const char* mid, const char* messageType) {
-    char json[300];
+    char json[400];
     MessageOut::buildOutMessage(
             mid,
             messageType,

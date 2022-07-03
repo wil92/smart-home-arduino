@@ -31,7 +31,7 @@ public:
 
     void webSocketEvent(WStype_t type, uint8_t *payload, size_t length);
 
-    void messageReceived(uint8_t *payload);
+    void messageReceived(MessageIn msg);
 
     void sendCurrentStatus(const char *mid, const char *messageType);
 
