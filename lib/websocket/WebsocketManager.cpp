@@ -6,11 +6,6 @@
 
 #define STRINGIGY(v) #v
 #define TOSTRING(v) STRINGIGY(v)
-#define EXPAND_TO(v) _##v##_
-#define EXPAND(v) EXPAND_TO(v)
-
-#define ttt(v) ~(~v + 0) == 0 && ~(~v + 1) == 1
-#define tt(v) ttt(v)
 
 WebsocketManager::WebsocketManager(DeviceConfig config) {
     WebsocketManager::config = config;
