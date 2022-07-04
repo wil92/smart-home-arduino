@@ -17,7 +17,7 @@ void NetworkManager::connectToNetwork(char *ssidNetwork, char *passwordNetwork) 
     Serial.println(" ...");
 
     int i = 0;
-    while (wiFiMulti.run() != WL_CONNECTED) { // Wait for the Wi-Fi to connect
+    while (wiFiMulti.run() != WL_CONNECTED) {
         delay(1000);
         Serial.print(++i);
         Serial.print('.');
@@ -26,7 +26,7 @@ void NetworkManager::connectToNetwork(char *ssidNetwork, char *passwordNetwork) 
     Serial.println('\n');
     Serial.println("Connection established!");
     Serial.print("IP address:\t");
-    Serial.println(WiFi.localIP());         // Send the IP address of the ESP8266 to the computer
+    Serial.println(WiFi.localIP());
 }
 
 void NetworkManager::createHostpot(const char *ssidNetwork, const char *passwordNetwork) {

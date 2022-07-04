@@ -20,7 +20,7 @@ void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent
 
 #if defined(WSS) && WSS == 1
     X509List *certCA = new X509List(home_url_CA);
-    webSocket.beginSslWithCA(host, port, url, certCA);
+    webSocket.beginSslWithCA(host, port, url, certCA, "wss");
 #else
     webSocket.begin(host, port, url);
 #endif
