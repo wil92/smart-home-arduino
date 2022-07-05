@@ -5,6 +5,9 @@
 #ifndef SMART_HOME_WEBSOCKETMANAGER_H
 #define SMART_HOME_WEBSOCKETMANAGER_H
 
+#define STRINGIGY(v) #v
+#define TOSTRING(v) STRINGIGY(v)
+
 #include <SocketIOclient.h>
 #include "certs.h"
 #include "../communication/MessageIn.h"

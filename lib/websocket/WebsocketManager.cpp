@@ -4,9 +4,6 @@
 
 #include "WebsocketManager.h"
 
-#define STRINGIGY(v) #v
-#define TOSTRING(v) STRINGIGY(v)
-
 WebsocketManager::WebsocketManager(DeviceConfig config) {
     WebsocketManager::config = config;
     status = true;
