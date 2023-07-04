@@ -21,7 +21,7 @@ char *passwordNetwork = TOSTRING(NETWORK_PASSWORD);
 
 // device static configuration
 const char *ID = "Yztyqd1Ops0QAXfhxMs2";
-const char *name = "Luz1";
+const char *name = "Aquarium01";
 const char *type = "action.devices.types.OUTLET";
 
 NetworkManager networkManager;
@@ -55,7 +55,7 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
             websocketManager.messageReceived(MessageIn::parseObject(payload));
             break;
         case WStype_PING:
-            // pong will be send automatically
+            // pong will be sent automatically
             Serial.printf("[WSc] get ping\n");
             break;
         case WStype_PONG:
