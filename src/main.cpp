@@ -1,31 +1,38 @@
 #include <cstdio>
 
 #include <Arduino.h>
+
 #include "../lib/communication/MessageIn.h"
 #include "../lib/websocket/WebsocketManager.h"
 #include "../lib/network/NetworkManager.h"
+#include "../lib/flash/FlashManager.h"
 
 #if defined(ENV) && ENV == 1
-int RELAY_PIN = LED_BUILTIN;
+// nodemcu
+#define RELAY_PIN LED_BUILTIN
+#define ACTION_PIN 1
 #else
-int RELAY_PIN = 2;
+// esp01
+#define RELAY_PIN 2
+#define ACTION_PIN 1
 #endif
 
 // Hotpot credentials
-const char *ssid = "SmartHomeLight";
-const char *password = "smarthome";
+// const char *ssid = "SmartHomeLight";
+// const char *password = "smarthome";
 
 // Network credentials
-char *ssidNetwork = TOSTRING(NETWORK_SSID);
-char *passwordNetwork = TOSTRING(NETWORK_PASSWORD);
+// char *ssidNetwork = TOSTRING(NETWORK_SSID);
+// char *passwordNetwork = TOSTRING(NETWORK_PASSWORD);
 
 // device static configuration
-const char *ID = "Yztyqd1Ops0QAXfhxMs2";
-const char *name = "Luz1";
-const char *type = "action.devices.types.OUTLET";
+// const char *ID = "Yztyqd1Ops0QAXfhxMs2";
+// const char *name = "Luz1";
+// const char *type = "action.devices.types.OUTLET";
 
 NetworkManager networkManager;
-WebsocketManager websocketManager = WebsocketManager({ID, type, name});
+FlashManager flashManager;
+WebsocketManager websocketManager = WebsocketManager({flashManager.ID, flashManager.type, flashManager.name});
 
 void (*resetFunc)(void) = 0;
 
@@ -72,15 +79,17 @@ void setup() {
     pinMode(RELAY_PIN, OUTPUT);
     updateRelayPin(websocketManager.isStatus());
 
+    EEPROM.read(0);
+
     // create hotpot
     //    networkManager.createHostpot(ssid, password);
     //    delay(100);
 
     // connect to network
-    networkManager.connectToNetwork(ssidNetwork, passwordNetwork);
+    networkManager.connectToNetwork(flashManager.ssidNetwork, flashManager.passwordNetwork);
 
     websocketManager.onUpdateStatusEvent(updateRelayPin);
-    websocketManager.settingUpWebSocket(webSocketEvent);
+    websocketManager.settingUpWebSocket(webSocketEvent, flashManager.port, flashManager.host, flashManager.url);
 }
 
 void loop() {

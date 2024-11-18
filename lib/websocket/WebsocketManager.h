@@ -5,8 +5,6 @@
 #ifndef SMART_HOME_WEBSOCKETMANAGER_H
 #define SMART_HOME_WEBSOCKETMANAGER_H
 
-#define STRINGIGY(v) #v
-#define TOSTRING(v) STRINGIGY(v)
 #define CONNECTION_LOST_TIMEOUT 60000
 
 #include <SocketIOclient.h>
@@ -29,10 +27,14 @@ private:
     DeviceConfig config;
     bool status;
     unsigned long lastConnection;
+
 public:
     WebsocketManager(DeviceConfig config);
 
-    void settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent);
+    void settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent,
+                            uint16_t port,
+                            const char *host,
+                            const char *url);
 
     bool isConnectionAlive();
 

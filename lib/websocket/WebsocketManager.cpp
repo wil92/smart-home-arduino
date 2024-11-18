@@ -9,11 +9,11 @@ WebsocketManager::WebsocketManager(DeviceConfig config) {
     status = true;
 }
 
-void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent) {
-    uint16_t port = PORT;
-    const char *host = TOSTRING(HOST);
-    const char *url = TOSTRING(URL);
-
+void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent,
+                                          uint16_t port,
+                                          const char *host,
+                                          const char *url) {
+    // todo: this should be configurable too
 #if defined(WSS) && WSS == 1
     X509List *certCA = new X509List(home_url_CA);
     webSocket.beginSslWithCA(host, port, url, certCA, "wss");
