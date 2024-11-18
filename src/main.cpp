@@ -27,6 +27,8 @@ const char *type = "action.devices.types.OUTLET";
 NetworkManager networkManager;
 WebsocketManager websocketManager = WebsocketManager({ID, type, name});
 
+void (*resetFunc)(void) = 0;
+
 void updateRelayPin(bool s) {
     if (s) {
         digitalWrite(RELAY_PIN, LOW);
@@ -36,7 +38,6 @@ void updateRelayPin(bool s) {
 }
 
 void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
-
     switch (type) {
         case WStype_DISCONNECTED:
             Serial.printf("[WSc] Disconnected!\n");
@@ -44,14 +45,14 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
         case WStype_CONNECTED:
             Serial.printf("[WSc] Connected to url: %s\n", payload);
 
-            // send message to server when Connected
+        // send message to server when Connected
             websocketManager.sendCurrentStatus("", "QUERY");
             break;
         case WStype_TEXT:
             Serial.printf("[WSc] get text: %s\n", payload);
 
-            // send message to server
-            // webSocket.sendTXT("message here");
+        // send message to server
+        // webSocket.sendTXT("message here");
             websocketManager.messageReceived(MessageIn::parseObject(payload));
             break;
         case WStype_PING:
@@ -63,7 +64,6 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
             Serial.printf("[WSc] get pong\n");
             break;
     }
-
 }
 
 void setup() {
@@ -73,8 +73,8 @@ void setup() {
     updateRelayPin(websocketManager.isStatus());
 
     // create hotpot
-//    networkManager.createHostpot(ssid, password);
-//    delay(100);
+    //    networkManager.createHostpot(ssid, password);
+    //    delay(100);
 
     // connect to network
     networkManager.connectToNetwork(ssidNetwork, passwordNetwork);
@@ -85,7 +85,12 @@ void setup() {
 
 void loop() {
     // scan networks
-//    networkManager.loopScanNetworks();
+    //    networkManager.loopScanNetworks();
 
     websocketManager.loop();
+
+    // check if websocket connected or reset arduino
+    if (websocketManager.isConnectionAlive()) {
+        resetFunc();
+    }
 }

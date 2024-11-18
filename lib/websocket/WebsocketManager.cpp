@@ -10,7 +10,6 @@ WebsocketManager::WebsocketManager(DeviceConfig config) {
 }
 
 void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent) {
-
     uint16_t port = PORT;
     const char *host = TOSTRING(HOST);
     const char *url = TOSTRING(URL);
@@ -26,10 +25,18 @@ void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent
     webSocket.onEvent(webSocketClientEvent);
 
     // use HTTP Basic Authorization this is optional remove if not needed
-//    webSocket.setAuthorization("user", "Password");
+    //    webSocket.setAuthorization("user", "Password");
 
     // try ever 5000 again if connection has failed
     webSocket.setReconnectInterval(5000);
+
+    // initialize lastConnectionValue
+    lastConnection = millis();
+}
+
+bool WebsocketManager::isConnectionAlive() {
+    return webSocket.isConnected() ||
+           millis() - lastConnection <= CONNECTION_LOST_TIMEOUT;
 }
 
 void WebsocketManager::messageReceived(MessageIn msg) {
@@ -40,20 +47,24 @@ void WebsocketManager::messageReceived(MessageIn msg) {
     sendCurrentStatus(msg.mid, msg.payload.messageType);
 }
 
-void WebsocketManager::sendCurrentStatus(const char* mid, const char* messageType) {
+void WebsocketManager::sendCurrentStatus(const char *mid, const char *messageType) {
     char json[400];
     MessageOut::buildOutMessage(
-            mid,
-            messageType,
-            config.ID,
-            config.type,
-            config.name,
-            status,
-            json);
+        mid,
+        messageType,
+        config.ID,
+        config.type,
+        config.name,
+        status,
+        json);
     webSocket.sendTXT(json);
 }
 
 void WebsocketManager::loop() {
+    if (webSocket.isConnected()) {
+        lastConnection = millis();
+    }
+
     webSocket.loop();
 }
 

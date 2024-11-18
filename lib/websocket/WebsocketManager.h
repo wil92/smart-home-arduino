@@ -7,6 +7,7 @@
 
 #define STRINGIGY(v) #v
 #define TOSTRING(v) STRINGIGY(v)
+#define CONNECTION_LOST_TIMEOUT 60000
 
 #include <SocketIOclient.h>
 #include "certs.h"
@@ -27,10 +28,13 @@ private:
     UpdateStatusEvent updateStatusEvent;
     DeviceConfig config;
     bool status;
+    unsigned long lastConnection;
 public:
     WebsocketManager(DeviceConfig config);
 
     void settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent);
+
+    bool isConnectionAlive();
 
     void webSocketEvent(WStype_t type, uint8_t *payload, size_t length);
 
