@@ -21,7 +21,7 @@
 NetworkManager networkManager;
 FlashManager flashManager;
 WebServerManager webServer;
-WebsocketManager websocketManager = WebsocketManager({flashManager.ID, flashManager.type, flashManager.name});
+WebsocketManager websocketManager;
 
 void (*resetFunc)(void) = 0;
 
@@ -64,20 +64,28 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
 
 void setup() {
     Serial.begin(9600);
+    EEPROM.begin(512);
 
+    // todo: remove this delay
     delay(3000);
 
-    Serial.println("Hello World!");
+    flashManager.loadSetup();
 
     pinMode(RELAY_PIN, OUTPUT);
     updateRelayPin(websocketManager.isStatus());
 
     if (flashManager.isSetup) {
         // connect to network
-        networkManager.connectToNetwork(flashManager.ssidNetwork, flashManager.passwordNetwork);
+        networkManager.connectToNetwork(flashManager.ssidNetwork.c_str(), flashManager.passwordNetwork.c_str());
 
+        websocketManager.config = {
+            flashManager.ID.c_str(),
+            flashManager.type.c_str(),
+            flashManager.name.c_str()
+        };
         websocketManager.onUpdateStatusEvent(updateRelayPin);
-        websocketManager.settingUpWebSocket(webSocketEvent, flashManager.port, flashManager.host, flashManager.url);
+        websocketManager.settingUpWebSocket(webSocketEvent, flashManager.port, flashManager.host.c_str(),
+                                            flashManager.url.c_str());
     } else {
         // create hotpot
         if (!networkManager.createHostpot(flashManager.ssid, flashManager.password)) {
@@ -87,6 +95,7 @@ void setup() {
         delay(100);
 
         // start web server
+        webServer.flashManager = &flashManager;
         webServer.setup();
         webServer.run();
     }

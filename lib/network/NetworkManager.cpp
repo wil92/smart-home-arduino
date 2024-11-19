@@ -10,7 +10,7 @@ NetworkManager::NetworkManager() {
     subnet = IPAddress(255, 255, 255, 0);
 }
 
-void NetworkManager::connectToNetwork(char *ssidNetwork, char *passwordNetwork) {
+void NetworkManager::connectToNetwork(const char *ssidNetwork, const char *passwordNetwork) {
     wiFiMulti = std::make_unique<ESP8266WiFiMulti>();
     wiFiMulti->addAP(ssidNetwork, passwordNetwork);
     Serial.print("Connecting to ");

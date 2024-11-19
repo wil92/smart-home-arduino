@@ -54,7 +54,7 @@ void WebServerManager::checkEndpoints(WiFiClient *client, const String &message)
 
         String key = "", value = "";
         bool flag = false;
-        while (index < message.length() && message[index] != ' ') {
+        while (index < (int) message.length() && message[index] != ' ') {
             if (!flag) {
                 if (message[index] == '=') {
                     flag = true;
@@ -64,7 +64,7 @@ void WebServerManager::checkEndpoints(WiFiClient *client, const String &message)
             } else {
                 if (message[index] == '&') {
                     flag = false;
-                    printDebugParam(key, value);
+                    setParameter(urlDecode(key), urlDecode(value));
                     key = "";
                     value = "";
                 } else {
@@ -73,7 +73,9 @@ void WebServerManager::checkEndpoints(WiFiClient *client, const String &message)
             }
             index++;
         }
-        printDebugParam(urlDecode(key), urlDecode(value));
+        setParameter(urlDecode(key), urlDecode(value));
+        flashManager->saveSetup();
+        flashManager->loadSetup();
         client->println(prepareBaseHeaders() + "\r\n");
     } else if (message.indexOf("GET /") >= 0) {
         client->println(prepareHeaders());
@@ -83,7 +85,7 @@ void WebServerManager::checkEndpoints(WiFiClient *client, const String &message)
 
 String WebServerManager::urlDecode(String &src) {
     String ret;
-    for (int i = 0, ii; i < src.length(); i++) {
+    for (int i = 0, ii; i < (int) src.length(); i++) {
         if (src[i] == '%') {
             sscanf(src.substring(i + 1, i + 3).c_str(), "%x", &ii);
             const char ch = static_cast<char>(ii);
@@ -96,8 +98,11 @@ String WebServerManager::urlDecode(String &src) {
     return (ret);
 }
 
-void WebServerManager::printDebugParam(const String &key, const String &value) {
-    Serial.print("Parameters: (\"");
+void WebServerManager::setParameter(const String &key, const String &value) const {
+    flashManager->setVariable(key, value);
+
+    // only on debug
+    Serial.print("Parameter: (\"");
     Serial.print(key);
     Serial.print("\": \"");
     Serial.print(value);

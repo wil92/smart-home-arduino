@@ -7,11 +7,6 @@
 #include "certs.h"
 #include "../communication/MessageOut.h"
 
-WebsocketManager::WebsocketManager(DeviceConfig config) {
-    WebsocketManager::config = config;
-    status = true;
-}
-
 void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent,
                                           uint16_t port,
                                           const char *host,

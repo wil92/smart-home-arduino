@@ -7,11 +7,11 @@
 
 #include <WiFiServer.h>
 #include <WiFiClient.h>
+#include "../flash/FlashManager.h"
 
 #define CLIENT_TIMEOUT 2000
 
 class WebServerManager {
-private:
     void checkEndpoints(WiFiClient *client, const String &message);
 
     static String prepareBaseHeaders();
@@ -22,11 +22,12 @@ private:
 
     void checkForConnections();
 
-    static void printDebugParam(const String &key, const String &value);
+    void setParameter(const String &key, const String &value) const;
 
     static String urlDecode(String &src);
 
 public:
+    FlashManager *flashManager = nullptr;
     std::unique_ptr<WiFiServer> server;
 
     void setup();

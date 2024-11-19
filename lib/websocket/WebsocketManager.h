@@ -19,15 +19,13 @@ struct DeviceConfig {
 };
 
 class WebsocketManager {
-private:
     WebSocketsClient webSocket;
     UpdateStatusEvent updateStatusEvent;
-    DeviceConfig config;
-    bool status;
-    unsigned long lastConnection;
+    bool status = true;
+    unsigned long lastConnection = 0;
 
 public:
-    WebsocketManager(DeviceConfig config);
+    DeviceConfig config = {};
 
     void settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent,
                             uint16_t port,

@@ -21,7 +21,7 @@ private:
     unsigned long lastNetworkScan = 1;
 public:
     NetworkManager();
-    void connectToNetwork(char *ssidNetwork, char *passwordNetwork);
+    void connectToNetwork(const char *ssidNetwork, const char *passwordNetwork);
 
     bool createHostpot(const char *ssidNetwork, const char *passwordNetwork);
 

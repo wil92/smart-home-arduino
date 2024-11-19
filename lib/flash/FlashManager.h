@@ -6,11 +6,17 @@
 #define FLASHMANAGER_H
 
 #include <EEPROM.h>
+#include <WString.h>
 
 #define STRINGIGY(v) #v
 #define TOSTRING(v) STRINGIGY(v)
 
 class FlashManager {
+private:
+    void saveString(String value, int *index);
+
+    String loadString(int *index);
+
 public:
     bool isSetup = false;
 
@@ -19,20 +25,24 @@ public:
     const char *password = "smarthome";
 
     // Network
-    char *ssidNetwork = TOSTRING(NETWORK_SSID);
-    char *passwordNetwork = TOSTRING(NETWORK_PASSWORD);
+    String ssidNetwork = TOSTRING(NETWORK_SSID);
+    String passwordNetwork = TOSTRING(NETWORK_PASSWORD);
 
     // Server config
     uint16_t port = PORT;
-    const char *host = TOSTRING(HOST);
-    const char *url = TOSTRING(URL);
+    String host = TOSTRING(HOST);
+    String url = TOSTRING(URL);
 
     // Device configuration
-    const char *ID = "Yztyqd1Ops0QAXfhxMs2";
-    const char *name = "Luz1";
-    const char *type = "action.devices.types.OUTLET";
+    String ID = "Yztyqd1Ops0QAXfhxMs2";
+    String name = "Luz1";
+    String type = "action.devices.types.OUTLET";
 
     void loadSetup();
+
+    void saveSetup();
+
+    void setVariable(const String &key, const String &value);
 };
 
 
