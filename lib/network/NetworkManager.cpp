@@ -5,19 +5,20 @@
 #include "NetworkManager.h"
 
 NetworkManager::NetworkManager() {
-    local_ip = IPAddress(192, 168, 1, 1);
+    localIp = IPAddress(192, 168, 1, 1);
     gateway = IPAddress(192, 168, 1, 1);
     subnet = IPAddress(255, 255, 255, 0);
 }
 
 void NetworkManager::connectToNetwork(char *ssidNetwork, char *passwordNetwork) {
-    wiFiMulti.addAP(ssidNetwork, passwordNetwork);
+    wiFiMulti = std::make_unique<ESP8266WiFiMulti>();
+    wiFiMulti->addAP(ssidNetwork, passwordNetwork);
     Serial.print("Connecting to ");
     Serial.print(ssidNetwork);
     Serial.println(" ...");
 
     int i = 0;
-    while (wiFiMulti.run() != WL_CONNECTED) {
+    while (wiFiMulti->run() != WL_CONNECTED) {
         delay(1000);
         Serial.print(++i);
         Serial.print('.');
@@ -29,9 +30,26 @@ void NetworkManager::connectToNetwork(char *ssidNetwork, char *passwordNetwork) 
     Serial.println(WiFi.localIP());
 }
 
-void NetworkManager::createHostpot(const char *ssidNetwork, const char *passwordNetwork) {
-    WiFi.softAP(ssidNetwork, passwordNetwork);
-    WiFi.softAPConfig(local_ip, gateway, subnet);
+bool NetworkManager::createHostpot(const char *ssidNetwork, const char *passwordNetwork) {
+    WiFi.softAPConfig(localIp, gateway, subnet);
+    int tries = 10;
+
+    Serial.println("Try to start soft AP");
+    while (!WiFi.softAP(ssidNetwork, passwordNetwork) && tries-- > 0) {
+        Serial.print(".");
+        delay(1000);
+    }
+    Serial.println("");
+
+    if (tries == 0) {
+        Serial.println("Soft AP failed");
+        return false;
+    }
+
+    Serial.println("Soft AP ready");
+    Serial.print("Local IP: ");
+    Serial.println(WiFi.softAPIP());
+    return true;
 }
 
 void NetworkManager::scanNetworks() {

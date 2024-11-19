@@ -8,9 +8,7 @@
 #define CONNECTION_LOST_TIMEOUT 60000
 
 #include <SocketIOclient.h>
-#include "certs.h"
 #include "../communication/MessageIn.h"
-#include "../communication/MessageOut.h"
 
 typedef std::function<void(bool status)> UpdateStatusEvent;
 

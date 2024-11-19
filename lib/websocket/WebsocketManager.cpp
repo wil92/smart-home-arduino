@@ -4,6 +4,9 @@
 
 #include "WebsocketManager.h"
 
+#include "certs.h"
+#include "../communication/MessageOut.h"
+
 WebsocketManager::WebsocketManager(DeviceConfig config) {
     WebsocketManager::config = config;
     status = true;

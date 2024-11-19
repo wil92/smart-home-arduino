@@ -13,7 +13,8 @@
 class FlashManager {
 public:
     bool isSetup = false;
-    // Hotpot
+
+    // Hotpot. todo: add this variables to the env
     const char *ssid = "SmartHomeLight";
     const char *password = "smarthome";
 

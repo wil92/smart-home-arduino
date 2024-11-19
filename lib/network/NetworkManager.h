@@ -12,9 +12,9 @@ const unsigned long NETWORK_SCAN_INTERVAL_IN_MICRO_SEC = 2000000L;
 
 class NetworkManager {
 private:
-    ESP8266WiFiMulti wiFiMulti;
+    std::unique_ptr<ESP8266WiFiMulti> wiFiMulti;
 
-    IPAddress local_ip;
+    IPAddress localIp;
     IPAddress gateway;
     IPAddress subnet;
 
@@ -23,7 +23,7 @@ public:
     NetworkManager();
     void connectToNetwork(char *ssidNetwork, char *passwordNetwork);
 
-    void createHostpot(const char *ssidNetwork, const char *passwordNetwork);
+    bool createHostpot(const char *ssidNetwork, const char *passwordNetwork);
 
     void scanNetworks();
     void loopScanNetworks();

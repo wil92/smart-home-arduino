@@ -6,6 +6,7 @@
 #include "../lib/websocket/WebsocketManager.h"
 #include "../lib/network/NetworkManager.h"
 #include "../lib/flash/FlashManager.h"
+#include "../lib/webserver/WebServerManager.h"
 
 #if defined(ENV) && ENV == 1
 // nodemcu
@@ -17,21 +18,9 @@
 #define ACTION_PIN 1
 #endif
 
-// Hotpot credentials
-// const char *ssid = "SmartHomeLight";
-// const char *password = "smarthome";
-
-// Network credentials
-// char *ssidNetwork = TOSTRING(NETWORK_SSID);
-// char *passwordNetwork = TOSTRING(NETWORK_PASSWORD);
-
-// device static configuration
-// const char *ID = "Yztyqd1Ops0QAXfhxMs2";
-// const char *name = "Luz1";
-// const char *type = "action.devices.types.OUTLET";
-
 NetworkManager networkManager;
 FlashManager flashManager;
+WebServerManager webServer;
 WebsocketManager websocketManager = WebsocketManager({flashManager.ID, flashManager.type, flashManager.name});
 
 void (*resetFunc)(void) = 0;
@@ -76,30 +65,45 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
 void setup() {
     Serial.begin(9600);
 
+    delay(3000);
+
+    Serial.println("Hello World!");
+
     pinMode(RELAY_PIN, OUTPUT);
     updateRelayPin(websocketManager.isStatus());
 
-    EEPROM.read(0);
+    if (flashManager.isSetup) {
+        // connect to network
+        networkManager.connectToNetwork(flashManager.ssidNetwork, flashManager.passwordNetwork);
 
-    // create hotpot
-    //    networkManager.createHostpot(ssid, password);
-    //    delay(100);
+        websocketManager.onUpdateStatusEvent(updateRelayPin);
+        websocketManager.settingUpWebSocket(webSocketEvent, flashManager.port, flashManager.host, flashManager.url);
+    } else {
+        // create hotpot
+        if (!networkManager.createHostpot(flashManager.ssid, flashManager.password)) {
+            // reset arduino if hotpot fails to start
+            resetFunc();
+        }
+        delay(100);
 
-    // connect to network
-    networkManager.connectToNetwork(flashManager.ssidNetwork, flashManager.passwordNetwork);
-
-    websocketManager.onUpdateStatusEvent(updateRelayPin);
-    websocketManager.settingUpWebSocket(webSocketEvent, flashManager.port, flashManager.host, flashManager.url);
+        // start web server
+        webServer.setup();
+        webServer.run();
+    }
 }
 
 void loop() {
-    // scan networks
-    //    networkManager.loopScanNetworks();
+    if (flashManager.isSetup) {
+        websocketManager.loop();
 
-    websocketManager.loop();
-
-    // check if websocket connected or reset arduino
-    if (websocketManager.isConnectionAlive()) {
-        resetFunc();
+        // check if websocket connected or reset arduino
+        if (websocketManager.isConnectionAlive()) {
+            resetFunc();
+        }
+    } else {
+        // scan networks
+        webServer.loop();
+        // Serial.println("[WServer] loop");
+        //    networkManager.loopScanNetworks();
     }
 }

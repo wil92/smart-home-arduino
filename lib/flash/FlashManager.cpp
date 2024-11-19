@@ -6,7 +6,8 @@
 
 void FlashManager::loadSetup() {
     if (EEPROM.read(0)) {
-        isSetup = true;
+        // todo: update this to 'true'
+        isSetup = false;
 
         // todo: load other configurations
     } else {
