@@ -10,6 +10,7 @@
 
 #define STRINGIGY(v) #v
 #define TOSTRING(v) STRINGIGY(v)
+#define IS_SETUP_FLAG 7
 
 class FlashManager {
 private:

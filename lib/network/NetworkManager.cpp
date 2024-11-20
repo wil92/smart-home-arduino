@@ -20,7 +20,6 @@ void NetworkManager::connectToNetwork(const char *ssidNetwork, const char *passw
     int i = 0;
     while (wiFiMulti->run() != WL_CONNECTED) {
         delay(1000);
-        Serial.print(++i);
         Serial.print('.');
     }
 

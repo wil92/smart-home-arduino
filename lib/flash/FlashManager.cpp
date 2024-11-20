@@ -7,7 +7,7 @@
 #include <HardwareSerial.h>
 
 void FlashManager::loadSetup() {
-    if (int index = 0; EEPROM.read(index)) {
+    if (int index = 0; EEPROM.read(index) == IS_SETUP_FLAG) {
         isSetup = true;
         index++;
 
@@ -44,7 +44,7 @@ void FlashManager::loadSetup() {
 
 void FlashManager::saveSetup() {
     int index = 0;
-    EEPROM.write(index++, 1);
+    EEPROM.write(index++, IS_SETUP_FLAG);
 
     // device
     saveString(String(ID), &index);
