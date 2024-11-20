@@ -30,7 +30,7 @@ void NetworkManager::connectToNetwork(const char *ssidNetwork, const char *passw
     Serial.println(WiFi.localIP());
 }
 
-bool NetworkManager::createHostpot(const char *ssidNetwork, const char *passwordNetwork) {
+bool NetworkManager::createHostpot(const char *ssidNetwork, const char *passwordNetwork) const {
     WiFi.softAPConfig(localIp, gateway, subnet);
     int tries = 10;
 
@@ -50,25 +50,4 @@ bool NetworkManager::createHostpot(const char *ssidNetwork, const char *password
     Serial.print("Local IP: ");
     Serial.println(WiFi.softAPIP());
     return true;
-}
-
-void NetworkManager::scanNetworks() {
-    WiFi.mode(WIFI_STA);
-    WiFi.disconnect();
-
-    int n = WiFi.scanNetworks();
-    for (int i = 0; i < n; ++i) {
-        Serial.println(WiFi.SSID(i));
-    }
-}
-
-void NetworkManager::loopScanNetworks() {
-    unsigned long current = micros();
-    if ((current - lastNetworkScan) / NETWORK_SCAN_INTERVAL_IN_MICRO_SEC) {
-        lastNetworkScan = current;
-        if (lastNetworkScan) {
-            lastNetworkScan = 0;
-            scanNetworks();
-        }
-    }
 }

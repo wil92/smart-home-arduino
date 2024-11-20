@@ -7,10 +7,8 @@
 #include <HardwareSerial.h>
 
 void FlashManager::loadSetup() {
-    int index = 0;
-    if (EEPROM.read(index) || true) {
-        // todo: update this to 'true'
-        isSetup = false;
+    if (int index = 0; EEPROM.read(index)) {
+        isSetup = true;
         index++;
 
         // device

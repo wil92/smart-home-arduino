@@ -106,13 +106,11 @@ void loop() {
         websocketManager.loop();
 
         // check if websocket connected or reset arduino
-        if (websocketManager.isConnectionAlive()) {
+        if (!websocketManager.isConnectionAlive()) {
             resetFunc();
         }
     } else {
         // scan networks
         webServer.loop();
-        // Serial.println("[WServer] loop");
-        //    networkManager.loopScanNetworks();
     }
 }

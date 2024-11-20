@@ -33,8 +33,8 @@ void WebsocketManager::settingUpWebSocket(WebSocketsClient::WebSocketClientEvent
 }
 
 bool WebsocketManager::isConnectionAlive() {
-    return webSocket.isConnected() ||
-           millis() - lastConnection <= CONNECTION_LOST_TIMEOUT;
+    return millis() - lastConnection <= CONNECTION_LOST_TIMEOUT ||
+           webSocket.isConnected();
 }
 
 void WebsocketManager::messageReceived(MessageIn msg) {
