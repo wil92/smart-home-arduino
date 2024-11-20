@@ -109,7 +109,7 @@ void WebServerManager::setParameter(const String &key, const String &value) cons
     Serial.println("\")");
 }
 
-String WebServerManager::prepareHeaders() {
+String WebServerManager::prepareHeaders() const {
     return prepareBaseHeaders() +
            "Content-Type: text/html\r\n" +
            "Connection: close\r\n" + // the connection will be closed after completion of the response
@@ -117,10 +117,26 @@ String WebServerManager::prepareHeaders() {
            "\r\n";
 }
 
-String WebServerManager::prepareBaseHeaders() {
-    return String("HTTP/1.1 200 OK\r\n");
+String WebServerManager::prepareBaseHeaders() const {
+    return String("HTTP/1.1 200 OK") + "\r\n";
 }
 
-String WebServerManager::prepareHtmlPage() {
-    return String(base_html_page) + "\r\n";
+String WebServerManager::prepareHtmlPage() const {
+    String result = String(base_html_page) + "\r\n";
+
+    // Network
+    result.replace("$$SSID$$", flashManager->ssidNetwork);
+    result.replace("$$PASSWORD$$", flashManager->passwordNetwork);
+
+    // Server
+    result.replace("$$HOST$$", flashManager->host);
+    result.replace("$$PORT$$", String(flashManager->port));
+    result.replace("$$URL$$", flashManager->url);
+
+    // Device configuration
+    result.replace("$$DEVICE_ID$$", flashManager->ID);
+    result.replace("$$DEVICE_NAME$$", flashManager->name);
+    result.replace("$$DEVICE_TYPE$$", flashManager->type);
+
+    return result;
 }

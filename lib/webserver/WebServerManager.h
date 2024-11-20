@@ -14,11 +14,11 @@
 class WebServerManager {
     void checkEndpoints(WiFiClient *client, const String &message);
 
-    static String prepareBaseHeaders();
+    [[nodiscard]] String prepareBaseHeaders() const;
 
-    static String prepareHeaders();
+    [[nodiscard]] String prepareHeaders() const;
 
-    static String prepareHtmlPage();
+    [[nodiscard]] String prepareHtmlPage() const;
 
     void checkForConnections();
 
