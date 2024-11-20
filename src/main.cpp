@@ -15,7 +15,7 @@
 #else
 // esp01
 #define RELAY_PIN 2
-#define ACTION_PIN 1
+#define ACTION_PIN 0
 #endif
 
 NetworkManager networkManager;
