@@ -21,7 +21,7 @@ public:
     bool isSetup = false;
 
     // Hotpot. todo: add this variables to the env
-    const char *ssid = "SmartHomeLight";
+    const char *ssid = "SmartHomeDevice";
     const char *password = "smarthome";
 
     // Network
@@ -34,8 +34,8 @@ public:
     String url = TOSTRING(URL);
 
     // Device configuration
-    String ID = "Yztyqd1Ops0QAXfhxMs2";
-    String name = "Luz1";
+    String ID = "";
+    String name = "Luz";
     String type = "action.devices.types.OUTLET";
 
     void loadSetup();
