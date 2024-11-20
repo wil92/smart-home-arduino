@@ -11,7 +11,7 @@
 #if defined(ENV) && ENV == 1
 // nodemcu
 #define RELAY_PIN LED_BUILTIN
-#define ACTION_PIN 1
+#define ACTION_PIN 13
 #else
 // esp01
 #define RELAY_PIN 2
@@ -25,12 +25,9 @@ WebsocketManager websocketManager;
 
 void (*resetFunc)(void) = 0;
 
-void updateRelayPin(bool s) {
-    if (s) {
-        digitalWrite(RELAY_PIN, LOW);
-    } else {
-        digitalWrite(RELAY_PIN, HIGH);
-    }
+typedef std::function<void(bool status)> UpdateStatusEvent;
+void updateRelayPin(const bool status) {
+    digitalWrite(RELAY_PIN, status ? LOW : HIGH);
 }
 
 void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
@@ -39,20 +36,17 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length) {
             Serial.printf("[WSc] Disconnected!\n");
             break;
         case WStype_CONNECTED:
+            // send message to server when Connected
             Serial.printf("[WSc] Connected to url: %s\n", payload);
-
-        // send message to server when Connected
             websocketManager.sendCurrentStatus("", "QUERY");
             break;
         case WStype_TEXT:
+            // send message to server
             Serial.printf("[WSc] get text: %s\n", payload);
-
-        // send message to server
-        // webSocket.sendTXT("message here");
             websocketManager.messageReceived(MessageIn::parseObject(payload));
             break;
         case WStype_PING:
-            // pong will be send automatically
+            // pong will be sent automatically
             Serial.printf("[WSc] get ping\n");
             break;
         case WStype_PONG:
@@ -72,6 +66,7 @@ void setup() {
     flashManager.loadSetup();
 
     pinMode(RELAY_PIN, OUTPUT);
+    pinMode(ACTION_PIN, INPUT);
     updateRelayPin(websocketManager.isStatus());
 
     if (flashManager.isSetup) {
@@ -96,6 +91,7 @@ void setup() {
 
         // start web server
         webServer.flashManager = &flashManager;
+        webServer.rf = resetFunc;
         webServer.setup();
         webServer.run();
     }
@@ -107,6 +103,15 @@ void loop() {
 
         // check if websocket connected or reset arduino
         if (!websocketManager.isConnectionAlive()) {
+            Serial.println("Connection lost");
+            resetFunc();
+        }
+
+        // check if action pin is pressed
+        if (digitalRead(ACTION_PIN) == LOW) {
+            Serial.println("Reset configuration executed");
+            EEPROM.write(0, 0);
+            EEPROM.commit();
             resetFunc();
         }
     } else {

@@ -25,6 +25,7 @@ void WebServerManager::checkForConnections() {
 
         const unsigned long connectionTime = millis();
         String message = "";
+        bool resetFlag = false;
 
         while (client.connected() && millis() - connectionTime <= CLIENT_TIMEOUT) {
             if (client.available()) {
@@ -32,7 +33,7 @@ void WebServerManager::checkForConnections() {
                 message += line;
 
                 if (line.length() == 1 && line[0] == '\n') {
-                    checkEndpoints(&client, message);
+                    resetFlag = checkEndpoints(&client, message);
 
                     break;
                 }
@@ -40,10 +41,14 @@ void WebServerManager::checkForConnections() {
         }
 
         client.stop();
+
+        if (resetFlag) {
+            rf();
+        }
     }
 }
 
-void WebServerManager::checkEndpoints(WiFiClient *client, const String &message) {
+bool WebServerManager::checkEndpoints(WiFiClient *client, const String &message) const {
     Serial.println(message);
     int index;
     if (const String postHeader = "POST /"; (index = message.indexOf(postHeader)) >= 0) {
@@ -77,10 +82,13 @@ void WebServerManager::checkEndpoints(WiFiClient *client, const String &message)
         flashManager->saveSetup();
         flashManager->loadSetup();
         client->println(prepareBaseHeaders() + "\r\n");
-    } else if (message.indexOf("GET /") >= 0) {
+        return true;
+    }
+    if (message.indexOf("GET /") >= 0) {
         client->println(prepareHeaders());
         client->println(prepareHtmlPage());
     }
+    return false;
 }
 
 String WebServerManager::urlDecode(String &src) {
