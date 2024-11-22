@@ -7,9 +7,11 @@
 #include <HardwareSerial.h>
 
 void FlashManager::loadSetup() {
-    if (int index = 0; EEPROM.read(index) == IS_SETUP_FLAG) {
+    if (EEPROM.read(CONFIG_STATUS_ADDRESS) == IS_ENABLE_FLAG) {
         isSetup = true;
-        index++;
+        switchStatus = EEPROM.read(SWITCH_STATUS_ADDRESS) == IS_ENABLE_FLAG;
+
+        int index = CONFIG_DATA_ADDRESS;
 
         // device
         ID = loadString(&index);
@@ -43,8 +45,10 @@ void FlashManager::loadSetup() {
 }
 
 void FlashManager::saveSetup() {
-    int index = 0;
-    EEPROM.write(index++, IS_SETUP_FLAG);
+    EEPROM.write(CONFIG_STATUS_ADDRESS, IS_ENABLE_FLAG);
+    EEPROM.write(SWITCH_STATUS_ADDRESS, switchStatus ? IS_ENABLE_FLAG : 0);
+
+    int index = CONFIG_DATA_ADDRESS;
 
     // device
     saveString(String(ID), &index);
@@ -63,6 +67,16 @@ void FlashManager::saveSetup() {
 
     EEPROM.commit();
     Serial.println("Data saved in flash memory");
+}
+
+bool FlashManager::getSwitchStatus() const {
+    return switchStatus;
+}
+
+void FlashManager::setSwitchStatus(const bool status) {
+    switchStatus = status;
+    EEPROM.write(SWITCH_STATUS_ADDRESS, status ? IS_ENABLE_FLAG : 0);
+    EEPROM.commit();
 }
 
 void FlashManager::saveString(String value, int *index) {

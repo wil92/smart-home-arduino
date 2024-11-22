@@ -10,10 +10,16 @@
 
 #define STRINGIGY(v) #v
 #define TOSTRING(v) STRINGIGY(v)
-#define IS_SETUP_FLAG 7
+
+#define IS_ENABLE_FLAG 7
+#define CONFIG_STATUS_ADDRESS 0
+#define SWITCH_STATUS_ADDRESS 1
+#define CONFIG_DATA_ADDRESS 2
+
 
 class FlashManager {
-private:
+    bool switchStatus = true;
+
     void saveString(String value, int *index);
 
     String loadString(int *index);
@@ -42,6 +48,10 @@ public:
     void loadSetup();
 
     void saveSetup();
+
+    [[nodiscard]] bool getSwitchStatus() const;
+
+    void setSwitchStatus(bool status);
 
     void setVariable(const String &key, const String &value);
 };

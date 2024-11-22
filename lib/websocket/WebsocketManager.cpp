@@ -39,8 +39,8 @@ bool WebsocketManager::isConnectionAlive() {
 
 void WebsocketManager::messageReceived(MessageIn msg) {
     if (!std::strcmp(msg.payload.messageType, "EXECUTE")) {
-        status = msg.payload.command.on;
-        updateStatusEvent(status);
+        flashManager->setSwitchStatus(!msg.payload.command.on);
+        updateStatusEvent(flashManager->getSwitchStatus());
     }
     sendCurrentStatus(msg.mid, msg.payload.messageType);
 }
@@ -53,7 +53,7 @@ void WebsocketManager::sendCurrentStatus(const char *mid, const char *messageTyp
         config.ID,
         config.type,
         config.name,
-        status,
+        !flashManager->getSwitchStatus(),
         json);
     webSocket.sendTXT(json);
 }
@@ -68,8 +68,4 @@ void WebsocketManager::loop() {
 
 void WebsocketManager::onUpdateStatusEvent(UpdateStatusEvent updateStatusEvent) {
     WebsocketManager::updateStatusEvent = updateStatusEvent;
-}
-
-bool WebsocketManager::isStatus() const {
-    return status;
 }

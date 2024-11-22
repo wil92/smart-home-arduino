@@ -9,6 +9,7 @@
 
 #include <SocketIOclient.h>
 #include "../communication/MessageIn.h"
+#include "../flash/FlashManager.h"
 
 typedef std::function<void(bool status)> UpdateStatusEvent;
 
@@ -21,10 +22,10 @@ struct DeviceConfig {
 class WebsocketManager {
     WebSocketsClient webSocket;
     UpdateStatusEvent updateStatusEvent;
-    bool status = true;
     unsigned long lastConnection = 0;
 
 public:
+    FlashManager *flashManager = nullptr;
     DeviceConfig config = {};
 
     void settingUpWebSocket(WebSocketsClient::WebSocketClientEvent webSocketClientEvent,
@@ -43,8 +44,6 @@ public:
     void loop();
 
     void onUpdateStatusEvent(UpdateStatusEvent updateStatusEvent);
-
-    bool isStatus() const;
 };
 
 

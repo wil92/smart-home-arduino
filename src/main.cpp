@@ -67,12 +67,13 @@ void setup() {
 
     pinMode(RELAY_PIN, OUTPUT);
     pinMode(ACTION_PIN, INPUT);
-    updateRelayPin(websocketManager.isStatus());
+    updateRelayPin(flashManager.getSwitchStatus());
 
     if (flashManager.isSetup) {
         // connect to network
         networkManager.connectToNetwork(flashManager.ssidNetwork.c_str(), flashManager.passwordNetwork.c_str());
 
+        websocketManager.flashManager = &flashManager;
         websocketManager.config = {
             flashManager.ID.c_str(),
             flashManager.type.c_str(),
@@ -101,7 +102,7 @@ void loop() {
     if (flashManager.isSetup) {
         websocketManager.loop();
 
-        // check if websocket connected or reset arduino
+        // check if websocket is connected or reset arduino
         if (!websocketManager.isConnectionAlive()) {
             Serial.println("Connection lost");
             resetFunc();
